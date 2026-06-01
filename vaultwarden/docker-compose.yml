@@ -1,0 +1,27 @@
+networks:
+  docker-vnet:
+    external: true
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: unless-stopped
+    networks:
+      - docker-vnet
+    ports:
+      - 8081:80
+    volumes:
+      - ./data:/data
+    environment:
+      - DOMAIN:https://vaultwarden.tail9d9a9d.ts.net
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:80/alive || exit 1"]
+      interval: 5m
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256M
