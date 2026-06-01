@@ -17,6 +17,12 @@ services:
       - ${HOME}/services:/app/data/projects
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://127.0.0.1:3552/api/health | grep -q '\"status\":\"UP\"' || exit 1"]
+      interval: 5m
+      timeout: 5s
+      retries: 3
+      start_period: 30s
     deploy:
       resources:
         limits:
