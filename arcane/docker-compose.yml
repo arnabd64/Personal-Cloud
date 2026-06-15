@@ -2,6 +2,9 @@ networks:
   docker-vnet:
     external: true
 
+volumes:
+  data:
+
 services:
   arcane:
     image: ghcr.io/getarcaneapp/arcane:latest
@@ -13,7 +16,7 @@ services:
       - 3552:3552/tcp
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./data:/app/data
+      - data:/app/data
       - ${HOME}/services:/app/data/projects
     env_file:
       - .env

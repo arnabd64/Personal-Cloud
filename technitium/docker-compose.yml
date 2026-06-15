@@ -1,0 +1,34 @@
+networks:
+  docker-vnet:
+    external: true
+
+volumes:
+  data:
+
+services:
+  technitium:
+    image: technitium/dns-server:latest
+    restart: unless-stopped
+    networks:
+      - docker-vnet
+    ports:
+      - 5380:5380/tcp # webUI
+      - 53:53/tcp     # Plain DNS TCP
+      - 53:53/udp     # Plain DNS UDP
+    volumes:
+      - ./config:/etc/dns/config
+    environment:
+      - TZ=Asia/Kolkata
+      - DNS_SERVER_DOMAIN=dietpi.lan
+      - DNS_SERVER_ADMIN_PASSWORD=MySecurePassword
+    healthcheck:
+      test: ["CMD", "dig", "@127.0.0.1", "example.com", "+short", "+time=3"]
+      interval: 90s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256M
